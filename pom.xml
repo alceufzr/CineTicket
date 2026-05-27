@@ -20,7 +20,7 @@
 
     <properties>
         <!-- Alinhado com o Oracle OpenJDK 26 do seu IntelliJ -->
-        <java.version>26</java.version>
+        <java.version>17</java.version>
     </properties>
 
     <dependencies>
@@ -33,7 +33,7 @@
         <!-- Banco de Dados: Spring Data JDBC e Driver PostgreSQL -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jdbc</artifactId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -56,6 +56,13 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 
