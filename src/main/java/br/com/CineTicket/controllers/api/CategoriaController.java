@@ -34,7 +34,7 @@ public class CategoriaController {
     public Categoria atualizar(@PathVariable Integer id, @RequestBody Categoria categoriaAtualizada) {
         return categoriaRepository.findById(id)
                 .map(categoriaExistente -> {
-                    categoriaExistente.setNome(categoriaAtualizada.getNome());
+                    categoriaExistente.setDescricao(categoriaAtualizada.getDescricao());
                     return categoriaRepository.save(categoriaExistente);
                 }).orElseThrow(() -> new RuntimeException("Categoria não encontrada com o ID: " + id));
     }
