@@ -1,7 +1,7 @@
 package br.com.CineTicket.controllers.api;
 
 import br.com.CineTicket.models.Filme;
-import br.com.CineTicket.models.Funcionario;
+import br.com.CineTicket.models.Sala;
 import br.com.CineTicket.models.Sessao;
 import br.com.CineTicket.repositories.SessaoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,9 +19,11 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(SessaoController.class)
 public class SessaoControllerTest {
@@ -37,37 +39,39 @@ public class SessaoControllerTest {
 
     @Test
     @DisplayName("Deve listar todas as sessões com sucesso")
-    void deveListarTodasAsSessoes() throws Exception {
-        Filme filme = new Filme(); // Mocks vazios para o relacionamento
-        Funcionario funcionario = new Funcionario();
-
-        Sessao s1 = new Sessao(1, filme, funcionario, LocalDateTime.now(), 3, new BigDecimal("25.00"));
-        Sessao s2 = new Sessao(2, filme, funcionario, LocalDateTime.now(), 5, new BigDecimal("30.00"));
+    void deveListarTodasAsCompras() throws Exception {
+        Sessao s1 = new Sessao(1, new Filme(), new Sala(), LocalDateTime.now(), new BigDecimal("25.00"), 120);
+        Sessao s2 = new Sessao(2, new Filme(), new Sala(), LocalDateTime.now(), new BigDecimal("35.00"), 150);
 
         when(sessaoRepository.findAll()).thenReturn(List.of(s1, s2));
 
         mockMvc.perform(get("/sessoes"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$[0].sala").value(3))
-                .andExpect(jsonPath("$[1].sala").value(5));
+                .andExpect(jsonPath("$[0].idSessao").value(1))
+                .andExpect(jsonPath("$[0].valorIngresso").value(25.00))
+                .andExpect(jsonPath("$[0].capacidade").value(120))
+                .andExpect(jsonPath("$[1].idSessao").value(2))
+                .andExpect(jsonPath("$[1].valorIngresso").value(35.00))
+                .andExpect(jsonPath("$[1].capacidade").value(150));
     }
 
     @Test
     @DisplayName("Deve buscar sessão por ID com sucesso")
-    void deveBuscarSessaoPorId() throws Exception {
-        Sessao sessao = new Sessao(1, new Filme(), new Funcionario(), LocalDateTime.now(), 2, new BigDecimal("22.50"));
+    void deveBuscarCompraPorId() throws Exception {
+        Sessao sessao = new Sessao(1, new Filme(), new Sala(), LocalDateTime.now(), new BigDecimal("30.00"), 100);
 
         when(sessaoRepository.findById(1)).thenReturn(Optional.of(sessao));
 
         mockMvc.perform(get("/sessoes/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.sala").value(2))
-                .andExpect(jsonPath("$.valorIngresso").value(22.50));
+                .andExpect(jsonPath("$.idSessao").value(1))
+                .andExpect(jsonPath("$.valorIngresso").value(30.00))
+                .andExpect(jsonPath("$.capacidade").value(100));
     }
 
     @Test
-    @DisplayName("Deve retornar 404 Not Found ao buscar ID de sessão inexistente")
+    @DisplayName("Deve retornar 404 Not Found quando ID da sessão não existir na busca")
     void deveRetornar404QuandoIdNaoEncontradoNoBuscar() throws Exception {
         when(sessaoRepository.findById(99)).thenReturn(Optional.empty());
 
@@ -77,8 +81,8 @@ public class SessaoControllerTest {
 
     @Test
     @DisplayName("Deve salvar uma sessão com sucesso")
-    void deveSalvarUmaSessao() throws Exception {
-        Sessao sessao = new Sessao(1, new Filme(), new Funcionario(), LocalDateTime.now(), 1, new BigDecimal("20.00"));
+    void deveSalvarUmaCompra() throws Exception {
+        Sessao sessao = new Sessao(1, new Filme(), new Sala(), LocalDateTime.now(), new BigDecimal("20.00"), 80);
 
         when(sessaoRepository.save(any(Sessao.class))).thenReturn(sessao);
 
@@ -86,14 +90,16 @@ public class SessaoControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(sessao)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.sala").value(1));
+                .andExpect(jsonPath("$.idSessao").value(1))
+                .andExpect(jsonPath("$.valorIngresso").value(20.00))
+                .andExpect(jsonPath("$.capacidade").value(80));
     }
 
     @Test
-    @DisplayName("Deve atualizar uma sessão com sucesso")
-    void deveAtualizarUmaSessao() throws Exception {
-        Sessao existente = new Sessao(1, new Filme(), new Funcionario(), LocalDateTime.now(), 1, new BigDecimal("20.00"));
-        Sessao atualizada = new Sessao(1, new Filme(), new Funcionario(), LocalDateTime.now(), 1, new BigDecimal("25.00")); // valor alterado
+    @DisplayName("Deve atualizar dados da sessão com sucesso")
+    void deveAtualizarUmaCompra() throws Exception {
+        Sessao existente = new Sessao(1, new Filme(), new Sala(), LocalDateTime.now(), new BigDecimal("20.00"), 80);
+        Sessao atualizada = new Sessao(1, new Filme(), new Sala(), LocalDateTime.now(), new BigDecimal("28.00"), 85);
 
         when(sessaoRepository.findById(1)).thenReturn(Optional.of(existente));
         when(sessaoRepository.save(any(Sessao.class))).thenReturn(atualizada);
@@ -102,13 +108,14 @@ public class SessaoControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(atualizada)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.valorIngresso").value(25.00));
+                .andExpect(jsonPath("$.valorIngresso").value(28.00))
+                .andExpect(jsonPath("$.capacidade").value(85));
     }
 
     @Test
-    @DisplayName("Deve deletar uma sessão por ID")
-    void deveDeletarUmaSessao() throws Exception {
-        Sessao sessao = new Sessao(1, new Filme(), new Funcionario(), LocalDateTime.now(), 1, new BigDecimal("20.00"));
+    @DisplayName("Deve deletar sessão por ID com sucesso")
+    void deveDeletarUmaCompra() throws Exception {
+        Sessao sessao = new Sessao(1, new Filme(), new Sala(), LocalDateTime.now(), new BigDecimal("15.00"), 60);
 
         when(sessaoRepository.findById(1)).thenReturn(Optional.of(sessao));
         doNothing().when(sessaoRepository).delete(sessao);
@@ -118,7 +125,7 @@ public class SessaoControllerTest {
     }
 
     @Test
-    @DisplayName("Deve retornar 404 Not Found ao tentar deletar ID inexistente")
+    @DisplayName("Deve retornar 404 Not Found quando ID da sessão não existir na deleção")
     void deveRetornar404QuandoIdNaoEncontradoNoDeletar() throws Exception {
         when(sessaoRepository.findById(99)).thenReturn(Optional.empty());
 

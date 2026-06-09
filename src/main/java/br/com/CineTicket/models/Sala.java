@@ -7,20 +7,17 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "perfil")
+@Table(name = "sala")
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Perfil {
+public class Sala {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_perfil")
-    private Integer idPerfil;
+    @Column(name = "id_sala")
+    private Integer idSala;
 
-    @Column(nullable = false, length = 50)
-    private String cargo;
-
-    @Column(name = "perm_banco_dados")
-    private Boolean permBancoDados;
+    @Column(nullable = false)
+    private Boolean ativo;
 }

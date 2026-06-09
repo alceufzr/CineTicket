@@ -15,9 +15,11 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ClienteController.class)
 public class ClienteControllerTest {
@@ -32,33 +34,36 @@ public class ClienteControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
-    @DisplayName("Deve listar todos os clientes com sucesso e retornar 200 OK")
-    void deveListarTodosOsClientes() throws Exception {
-        // Usando o construtor do Lombok (@AllArgsConstructor)
-        Cliente c1 = new Cliente(1, "Alceu Rodrigues", "12345678900", "alceu@email.com", "alceu_dev", "senha123");
-        Cliente c2 = new Cliente(2, "Fulano de Tal", "98765432111", "fulano@email.com", "fulano_test", "senha456");
+    @DisplayName("Deve listar todos os clientes com sucesso")
+    void deveListarTodasAsCompras() throws Exception {
+        Cliente c1 = new Cliente(1, "Carlos Silva", true, 50.00, true, "carlos.silva", "senha123");
+        Cliente c2 = new Cliente(2, "Ana Souza", false, 15.00, true, "ana.souza", "senha456");
 
-        List<Cliente> clientes = List.of(c1, c2);
-
-        when(clienteRepository.findAll()).thenReturn(clientes);
+        when(clienteRepository.findAll()).thenReturn(List.of(c1, c2));
 
         mockMvc.perform(get("/clientes"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$[0].nome").value("Alceu Rodrigues"))
-                .andExpect(jsonPath("$[1].nome").value("Fulano de Tal"));
+                .andExpect(jsonPath("$[0].idCliente").value(1))
+                .andExpect(jsonPath("$[0].nome").value("Carlos Silva"))
+                .andExpect(jsonPath("$[0].saldo").value(50.00))
+                .andExpect(jsonPath("$[1].idCliente").value(2))
+                .andExpect(jsonPath("$[1].nome").value("Ana Souza"))
+                .andExpect(jsonPath("$[1].saldo").value(15.00));
     }
 
     @Test
     @DisplayName("Deve buscar cliente por ID com sucesso")
-    void deveBuscarClientePorId() throws Exception {
-        Cliente cliente = new Cliente(1, "Alceu Rodrigues", "12345678900", "alceu@email.com", "alceu_dev", "senha123");
+    void deveBuscarCompraPorId() throws Exception {
+        Cliente cliente = new Cliente(1, "Carlos Silva", true, 50.00, true, "carlos.silva", "senha123");
 
         when(clienteRepository.findById(1)).thenReturn(Optional.of(cliente));
 
         mockMvc.perform(get("/clientes/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.nome").value("Alceu Rodrigues"));
+                .andExpect(jsonPath("$.idCliente").value(1))
+                .andExpect(jsonPath("$.nome").value("Carlos Silva"))
+                .andExpect(jsonPath("$.saldo").value(50.00));
     }
 
     @Test
@@ -71,9 +76,9 @@ public class ClienteControllerTest {
     }
 
     @Test
-    @DisplayName("Deve salvar um cliente com sucesso e retornar 200 OK")
-    void deveSalvarUmCliente() throws Exception {
-        Cliente cliente = new Cliente(1, "Alceu Rodrigues", "12345678900", "alceu@email.com", "alceu_dev", "senha123");
+    @DisplayName("Deve salvar um cliente com sucesso")
+    void deveSalvarUmaCompra() throws Exception {
+        Cliente cliente = new Cliente(1, "Marcos Oliveira", false, 100.00, true, "marcos.o", "senha789");
 
         when(clienteRepository.save(any(Cliente.class))).thenReturn(cliente);
 
@@ -81,15 +86,16 @@ public class ClienteControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(cliente)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.nome").value("Alceu Rodrigues"))
-                .andExpect(jsonPath("$.login").value("alceu_dev"));
+                .andExpect(jsonPath("$.idCliente").value(1))
+                .andExpect(jsonPath("$.nome").value("Marcos Oliveira"))
+                .andExpect(jsonPath("$.saldo").value(100.00));
     }
 
     @Test
     @DisplayName("Deve atualizar dados do cliente com sucesso")
-    void deveAtualizarUmCliente() throws Exception {
-        Cliente existente = new Cliente(1, "Alceu Rodrigues", "12345678900", "alceu@email.com", "alceu_dev", "senha123");
-        Cliente atualizado = new Cliente(1, "Alceu Fuzari", "12345678900", "alceu.novo@email.com", "alceu_dev", "senha123");
+    void deveAtualizarUmaCompra() throws Exception {
+        Cliente existente = new Cliente(1, "Carlos Silva", true, 50.00, true, "carlos.silva", "senha123");
+        Cliente atualizado = new Cliente(1, "Carlos Silva Santos", true, 75.00, true, "carlos.silva", "novaSenha123");
 
         when(clienteRepository.findById(1)).thenReturn(Optional.of(existente));
         when(clienteRepository.save(any(Cliente.class))).thenReturn(atualizado);
@@ -98,14 +104,14 @@ public class ClienteControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(atualizado)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.nome").value("Alceu Fuzari"))
-                .andExpect(jsonPath("$.email").value("alceu.novo@email.com"));
+                .andExpect(jsonPath("$.nome").value("Carlos Silva Santos"))
+                .andExpect(jsonPath("$.saldo").value(75.00));
     }
 
     @Test
     @DisplayName("Deve deletar cliente por ID com sucesso")
-    void deveDeletarUmCliente() throws Exception {
-        Cliente cliente = new Cliente(1, "Alceu Rodrigues", "12345678900", "alceu@email.com", "alceu_dev", "senha123");
+    void deveDeletarUmaCompra() throws Exception {
+        Cliente cliente = new Cliente(1, "Carlos Silva", true, 50.00, true, "carlos.silva", "senha123");
 
         when(clienteRepository.findById(1)).thenReturn(Optional.of(cliente));
         doNothing().when(clienteRepository).delete(cliente);

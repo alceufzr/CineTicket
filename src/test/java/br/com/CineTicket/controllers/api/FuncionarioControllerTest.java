@@ -1,7 +1,7 @@
 package br.com.CineTicket.controllers.api;
 
-import br.com.CineTicket.models.Perfil;
 import br.com.CineTicket.models.Funcionario;
+import br.com.CineTicket.models.Perfil;
 import br.com.CineTicket.repositories.FuncionarioRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -16,9 +16,11 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(FuncionarioController.class)
 public class FuncionarioControllerTest {

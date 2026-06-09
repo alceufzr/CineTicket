@@ -34,11 +34,11 @@ public class SessaoController {
     public Sessao atualizar(@PathVariable Integer id, @RequestBody Sessao sessaoAtualizada) {
         return sessaoRepository.findById(id)
                 .map(sessaoExistente -> {
-                    sessaoExistente.setDataHora(sessaoAtualizada.getDataHora());
-                    sessaoExistente.setSala(sessaoAtualizada.getSala());
-                    sessaoExistente.setValorIngresso(sessaoAtualizada.getValorIngresso());
                     sessaoExistente.setFilme(sessaoAtualizada.getFilme());
-                    sessaoExistente.setFuncionario(sessaoAtualizada.getFuncionario());
+                    sessaoExistente.setSala(sessaoAtualizada.getSala());
+                    sessaoExistente.setDataHora(sessaoAtualizada.getDataHora());
+                    sessaoExistente.setValorIngresso(sessaoAtualizada.getValorIngresso());
+                    sessaoExistente.setCapacidade(sessaoAtualizada.getCapacidade());
                     return sessaoRepository.save(sessaoExistente);
                 }).orElseThrow(() -> new RuntimeException("Sessão não encontrada com o ID: " + id));
     }

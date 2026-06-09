@@ -34,9 +34,9 @@ public class IngressoController {
     public Ingresso atualizar(@PathVariable Integer id, @RequestBody Ingresso ingressoAtualizado) {
         return ingressoRepository.findById(id)
                 .map(ingressoExistente -> {
-                    ingressoExistente.setAssento(ingressoAtualizado.getAssento());
                     ingressoExistente.setSessao(ingressoAtualizado.getSessao());
-                    ingressoExistente.setVenda(ingressoAtualizado.getVenda());
+                    ingressoExistente.setItemCompra(ingressoAtualizado.getItemCompra());
+                    ingressoExistente.setTipoIngresso(ingressoAtualizado.getTipoIngresso());
                     return ingressoRepository.save(ingressoExistente);
                 }).orElseThrow(() -> new RuntimeException("Ingresso não encontrado com o ID: " + id));
     }

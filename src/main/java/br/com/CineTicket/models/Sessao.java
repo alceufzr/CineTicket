@@ -1,10 +1,10 @@
 package br.com.CineTicket.models;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -26,14 +26,15 @@ public class Sessao {
     private Filme filme;
 
     @ManyToOne
-    @JoinColumn(name = "id_funcionario", nullable = false)
-    private Funcionario funcionario;
+    @JoinColumn(name = "id_sala", nullable = false)
+    private Sala sala;
 
     @Column(name = "data_hora")
     private LocalDateTime dataHora;
 
-    private Integer sala;
-
     @Column(name = "valor_ingresso")
     private BigDecimal valorIngresso;
+
+    @Column(nullable = false)
+    private Integer capacidade;
 }

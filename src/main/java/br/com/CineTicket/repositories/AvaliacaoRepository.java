@@ -1,10 +1,9 @@
 package br.com.CineTicket.repositories;
 
-import br.com.CineTicket.models.Venda;
+import br.com.CineTicket.models.Avaliacao;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface VendaRepository extends JpaRepository<Venda, Integer> {
-
+public interface AvaliacaoRepository extends JpaRepository<Avaliacao, Integer> {
 }

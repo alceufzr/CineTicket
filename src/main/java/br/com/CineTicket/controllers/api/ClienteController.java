@@ -35,8 +35,9 @@ public class ClienteController {
         return clienteRepository.findById(id)
                 .map(clienteExistente -> {
                     clienteExistente.setNome(clienteAtualizado.getNome());
-                    clienteExistente.setCpf(clienteAtualizado.getCpf());
-                    clienteExistente.setEmail(clienteAtualizado.getEmail());
+                    clienteExistente.setEstudante(clienteAtualizado.getEstudante());
+                    clienteExistente.setSaldo(clienteAtualizado.getSaldo());
+                    clienteExistente.setAtivo(clienteAtualizado.getAtivo());
                     clienteExistente.setLogin(clienteAtualizado.getLogin());
                     clienteExistente.setSenha(clienteAtualizado.getSenha());
                     return clienteRepository.save(clienteExistente);

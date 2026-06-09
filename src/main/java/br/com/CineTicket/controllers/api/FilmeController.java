@@ -34,10 +34,12 @@ public class FilmeController {
     public Filme atualizar(@PathVariable Integer id, @RequestBody Filme filmeAtualizado) {
         return filmeRepository.findById(id)
                 .map(filmeExistente -> {
+                    filmeExistente.setGenero(filmeAtualizado.getGenero());
+                    filmeExistente.setCategoria(filmeAtualizado.getCategoria());
                     filmeExistente.setTitulo(filmeAtualizado.getTitulo());
                     filmeExistente.setDuracao(filmeAtualizado.getDuracao());
-                    filmeExistente.setClassificacao(filmeAtualizado.getClassificacao());
-                    filmeExistente.setCategoria(filmeAtualizado.getCategoria());
+                    filmeExistente.setExibicao(filmeAtualizado.getExibicao());
+                    filmeExistente.setAtivo(filmeAtualizado.getAtivo());
                     return filmeRepository.save(filmeExistente);
                 }).orElseThrow(() -> new RuntimeException("Filme não encontrado com o ID: " + id));
     }

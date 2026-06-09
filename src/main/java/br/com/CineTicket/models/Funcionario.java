@@ -1,10 +1,10 @@
 package br.com.CineTicket.models;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "funcionario")
@@ -25,7 +25,10 @@ public class Funcionario {
     @Column(nullable = false, length = 100)
     private String nome;
 
+    @Column(nullable = false)
     private Double comissao;
+
+    @Column(nullable = false)
     private Boolean ativo;
 
     @Column(nullable = false, unique = true, length = 50)

@@ -1,10 +1,10 @@
 package br.com.CineTicket.models;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "ingresso")
@@ -23,9 +23,9 @@ public class Ingresso {
     private Sessao sessao;
 
     @ManyToOne
-    @JoinColumn(name = "id_venda", nullable = false)
-    private Venda venda;
+    @JoinColumn(name = "id_item_compra", nullable = false)
+    private ItemCompra itemCompra;
 
-    @Column(nullable = false, length = 10)
-    private String assento;
+    @Column(name = "tipo_ingreso", nullable = false, length = 50)
+    private String tipoIngresso;
 }
